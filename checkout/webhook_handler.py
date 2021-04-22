@@ -17,7 +17,7 @@ class StripeWH_Handler:
         self.request = request
 
     def _send_confirmation_email(self, order):
-        """ Send the user a confirmation email """
+        """Send the user a confirmation email"""
         cust_email = order.email
         subject = render_to_string(
             'checkout/confirmation_emails/confirmation_email_subject.txt',
@@ -25,7 +25,7 @@ class StripeWH_Handler:
         body = render_to_string(
             'checkout/confirmation_emails/confirmation_email_body.txt',
             {'order': order, 'contact_email': settings.DEFAULT_FROM_EMAIL})
-        
+
         send_mail(
             subject,
             body,
@@ -59,7 +59,7 @@ class StripeWH_Handler:
             if value == "":
                 shipping_details.address[field] = None
 
-        # Update prodifile information if save info was checked 
+        # Update profile information if save_info was checked
         profile = None
         username = intent.metadata.username
         if username != 'AnonymousUser':
@@ -73,8 +73,6 @@ class StripeWH_Handler:
                 profile.default_street_address2 = shipping_details.address.line2
                 profile.default_county = shipping_details.address.state
                 profile.save()
-
-
 
         order_exists = False
         attempt = 1
