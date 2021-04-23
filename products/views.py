@@ -8,6 +8,7 @@ from .forms import ProductForm
 
 # Create your views here.
 
+
 def all_products(request):
     """ A view to show all products, includes sorting and searh and queris """
 
@@ -29,7 +30,7 @@ def all_products(request):
             if 'direction' in request.GET:
                 direction = request.GET['direction']
                 if direction == 'desc':
-                    sortkey = f'-{sortkey}'             
+                    sortkey = f'-{sortkey}'
             products = products.order_by(sortkey)
 
         if 'category' in request.GET:
@@ -42,7 +43,7 @@ def all_products(request):
             if not query:
                 messages.error(request, "You didn´t enter any search crititercial")
                 return redirect(reverse('products'))
-            
+
             queries = Q(name__icontains=query) | Q(description__icontains=query)
             products = products.filter(queries)
 
@@ -54,25 +55,35 @@ def all_products(request):
         'current_categories': categories,
         'current_sorting': current_sorting,
     }
-   
+
     return render(request, 'products/products.html', context)
 
 
 def product_detail(request, product_id):
     """ A view to show ubdividual product details"""
 
-    product = get_object_or_404(Product ,pk=product_id)
+    product = get_object_or_404(Product, pk=product_id)
 
     context = {
         'product': product,
     }
-   
+
     return render(request, 'products/product_detail.html', context)
 
 
 def add_product(request):
     """ Add produkt to store """
-    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfullt added product!')
+            return redirect(reverse('add_product'))
+        else:
+            messages.error(request, 'Failed to add product')
+    else:
+        form = ProductForm()
+
     template = 'products/add_product.html'
     context = {
         'form': form,
