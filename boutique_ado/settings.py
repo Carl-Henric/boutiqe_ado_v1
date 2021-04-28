@@ -117,11 +117,13 @@ WSGI_APPLICATION = 'boutique_ado.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if 'DATABASE_URL' is os.environ:
+if 'DATABASE_URL' in os.environ:
+    print("line 121")
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
 else:
+    print("line 127")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
